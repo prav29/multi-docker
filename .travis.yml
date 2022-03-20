@@ -1,5 +1,6 @@
 language: generic
 sudo: required
+install: travis_wait mvn install
 services:
   - docker
 
@@ -14,9 +15,8 @@ after_success:
   - docker build -t pravallikavasi/multi-nginx ./nginx
   - docker build -t pravallikavasi/multi-server ./server
   - docker build -t pravallikavasi/multi-worker ./worker
-  #login to docker
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
-  # push these images to docker hub
+
   - docker push pravallikavasi/multi-client
   - docker push pravallikavasi/multi-nginx
   - docker push pravallikavasi/multi-server
