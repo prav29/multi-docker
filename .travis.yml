@@ -1,0 +1,23 @@
+language: generic
+sudo: required
+services:
+  - docker
+
+before_install:
+  - docker build -t pravallikavasi/react-test -f ./client/Dockerfile.dev ./client
+
+script:
+  - docker run -e CI=true pravallikavasi/react-test npm test
+
+after_success:
+  - docker build -t pravallikavasi/multi-client ./client
+  - docker build -t pravallikavasi/multi-nginx ./nginx
+  - docker build -t pravallikavasi/multi-server ./server
+  - docker build -t pravallikavasi/multi-worker ./worker
+  #login to docker
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  # push these images to docker hub
+  - docker push pravallikavasi/multi-client
+  - docker push pravallikavasi/multi-nginx
+  - docker push pravallikavasi/multi-server
+  - docker push pravallikavasi/multi-worker
